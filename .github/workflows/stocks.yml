@@ -1,0 +1,55 @@
+name: Stock prices
+
+on:
+  schedule:
+    # Daily full report. 13:00 UTC = 15:00 Europe/Madrid (CEST), 14:00 in winter (CET).
+    - cron: "0 13 * * *"
+    # Price alarm check every 15 min.
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "report or alerts"
+        required: false
+        default: "report"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stock-prices
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ "${{ github.event.schedule }}" = "0 13 * * *" ] || [ "${{ inputs.mode }}" = "report" ]; then
+            mkdir -p reports
+            python3 stocks_report.py | tee "reports/$(date -u +%Y-%m-%d).md"
+          else
+            python3 stocks_report.py --alerts
+          fi
+
+      - name: Commit state and reports
+        run: |
+          git config user.name "stock-bot"
+          git config user.email "stock-bot@users.noreply.github.com"
+          git pull --rebase --autostash
+          git add reports state.json 2>/dev/null || git add state.json
+          git diff --staged --quiet || git commit -m "update $(date -u +%Y-%m-%dT%H:%M)Z"
+          git push
