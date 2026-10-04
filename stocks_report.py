@@ -71,7 +71,7 @@ def send_telegram(text):
 def report():
     lines = []
     today = datetime.now(timezone.utc).strftime("%A, %B %d, %Y")
-    lines.append(f"Stock Watchlist — {today}")
+    lines.append(f"GitHub Stock Watchlist — {today}")
     lines.append("")
 
     errors = []
