@@ -2,10 +2,11 @@ name: Stock prices
 
 on:
   schedule:
-    # Daily full report. 13:00 UTC = 15:00 Europe/Madrid (CEST), 14:00 in winter (CET).
-    - cron: "0 13 * * *"
-    # Price alarm check every 15 min.
-    - cron: "*/15 * * * *"
+    # Daily full report at 13:03 UTC = 15:03 Europe/Madrid (CEST), 14:03 in winter (CET).
+    # Off top-of-hour minute — GitHub cron congested at :00, runs delayed/dropped.
+    - cron: "3 13 * * *"
+    # Price alarm check hourly at :59 (off-peak minute, GitHub cron best-effort).
+    - cron: "59 * * * *"
   workflow_dispatch:
     inputs:
       mode:
@@ -38,7 +39,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          if [ "${{ github.event.schedule }}" = "0 13 * * *" ] || [ "${{ inputs.mode }}" = "report" ]; then
+          if [ "${{ github.event.schedule }}" = "3 13 * * *" ] || [ "${{ inputs.mode }}" = "report" ]; then
             mkdir -p reports
             python3 stocks_report.py | tee "reports/$(date -u +%Y-%m-%d).md"
           else

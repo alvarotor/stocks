@@ -24,8 +24,8 @@ No server, no card. Works free on a **public** repository.
 
 | Schedule (UTC) | Mode | What |
 |---|---|---|
-| `0 13 * * *` | report | Full watchlist, sent to Telegram, saved to `reports/` |
-| `*/15 * * * *` | alerts | Checks `targets.yaml`, sends 🚨 message on crossing |
+| `3 13 * * *` | report | Full watchlist, sent to Telegram, saved to `reports/` |
+| `59 * * * *` | alerts | Checks `targets.yaml`, sends 🚨 message on crossing |
 | manual | report | Run from Actions tab |
 
 Alarm logic: fires once when price crosses the limit, rearms when price
@@ -38,5 +38,6 @@ moves back, fires again on re-cross. State in `state.json` (committed back).
 - **Private repo on a free account**: scheduled workflows are restricted.
   Public repo avoids this.
 - Prices are last daily close from Yahoo (not live intraday). Delay of a
-  few minutes on GitHub cron is normal.
-- Alarm check every 15 min; set `0 13 * * *` winter time is UTC+1 (14:00 local).
+  few minutes on GitHub cron is normal — GitHub `schedule` is best-effort
+  (runs may be delayed or dropped under load; off-peak minutes used).
+- Alarm check hourly at :59; report at 13:03 UTC (winter time is UTC+1 → 14:03 local).
