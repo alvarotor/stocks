@@ -15,4 +15,4 @@ targets:
 
   - symbol: NVDA
     name: Nvidia
-    above: 235     # alarm when price >= 235
+    below: 235     # alarm when price <= 235
