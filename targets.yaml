@@ -2,15 +2,17 @@
 # Fires once when price crosses the limit, rearms when price moves back.
 # Prices are last daily close from Yahoo (not live intraday).
 
-targets: []
-# targets:
-#   - symbol: AAPL
-#     name: Apple
-#     above: 300      # alarm when price >= 300
-#   - symbol: NVDA
-#     name: Nvidia
-#     below: 100      # alarm when price <= 100
-#   - symbol: TSLA
-#     name: Tesla
-#     above: 300
-#     below: 200
+targets:
+  - symbol: BTC-USD
+    name: Bitcoin
+    above: 87000   # alarm when price >= 87,000
+    below: 85000   # alarm when price <= 85,000
+
+  - symbol: GC=F
+    name: Gold
+    above: 4200    # alarm when price >= 4,200
+    below: 4120    # alarm when price <= 4,120
+
+  - symbol: NVDA
+    name: Nvidia
+    above: 235     # alarm when price >= 235
