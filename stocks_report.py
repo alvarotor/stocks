@@ -7,6 +7,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import yaml
 import yfinance as yf
@@ -70,7 +71,8 @@ def send_telegram(text):
 
 def report():
     lines = []
-    today = datetime.now(timezone.utc).strftime("%A, %B %d, %Y")
+    now = datetime.now(ZoneInfo("Europe/Madrid"))
+    today = now.strftime("%A, %B %d, %Y %H:%M")
     lines.append(f"GitHub Stock Watchlist — {today}")
     lines.append("")
 
