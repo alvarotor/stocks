@@ -1,4 +1,4 @@
 {
   "BTC-USD:below:85000": true,
-  "NVDA:below:235": true
+  "NVDA:below:235": false
 }
